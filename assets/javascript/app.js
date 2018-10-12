@@ -1,5 +1,5 @@
 
-var time = 5;
+var time = 45;
 var timeInterval;
 var score = 0;
 var total = 10;
@@ -55,84 +55,114 @@ var questions = [
         answerIndex: "Take off all your clothes"
     },
 ];
-function begin() {
-    $("#time").addClass("hidden");
-    renderQuestions();
-
-
-    $("#start").on("click", function () {
-        $("#time").removeClass("hidden")
-        $("#timer").text(time);
-        $("#intro").addClass("hidden");
-        $("#trivia").removeClass("hidden");
-
-        timeInterval = setInterval(function () {
-            time--;
-            if (time === 0) {
-                clearInterval(timeInterval);
-                checkTrivia();
-                $("#trivia").addClass("hidden");
-                $newDiv = $("<div id= 'restart'>");
-                $("#final").append("<h1> Score: " + score + "/" + total + "</h1>", $newDiv);
-                // $("#trivia").append($newDiv)
-                $("#restart").html("<button id='reset'>RESTART</button>")
-                $("#reset").on("click", function () {
-                    $("#trivia").removeClass("hidden")
-                    $("form").reset();
-
-
-                })
 
 
 
-            }
-            $("#timer").text(time);
-        }, 1000);
-    });
 
-    function renderQuestions() {
+//hide the timer
+$("#time").addClass("hidden");
 
-        questions.forEach(function (question, index) {
-            // console.log(questions[index])
-            var $form = $("<form>");
-            var $question = $("<h3>").text(question.question);
+//generate questions
+renderQuestions();
 
-            $form.append($question);
+// once the start button is clicked
+$("#start").on("click", function () {
+    event.preventDefault();
 
-            question.answers.forEach(function (answer, i) {
-                var $input = $('<input type="radio">');
-                $input.attr("value", answer);
-                $input.attr("name", index);
-                $form.append($input);
-                $form.append(answer);
-            });
+    //un hides the time
+    $("#time").removeClass("hidden")
 
-            $("#questions").append($form);
-        });
-    }
+    //displays the timer
+    $("#timer").text(time);
 
-    function checkTrivia() {
-        var $forms = $("form");
-        $forms.each(function (i, elem) {
-            $(elem).find("input:checked").each(function (i, elem) {
-                answer = (elem.getAttribute("value"));
-                // console.log(answer)
-                // console.log(questions[0].answerIndex)
-                for (var i = 0; i < questions.length; i++) {
+    // hides the start button
+    $("#intro").addClass("hidden");
 
-                    if (answer === questions[i].answerIndex) {
-                        console.log("winning")
-                        score++;
-                        console.log(score)
-                    }
-                }
-            });
-        })
-    }
-}
-function end() {
-    $("form").reset();
+    //un hides the trivia game
     $("#trivia").removeClass("hidden");
-    begin();
+
+    // the timer
+    timeInterval = setInterval(function(){
+        time--;
+        console.log(time)
+
+        //once times hits zero
+        if (time === 0) {
+
+            //clear the timer
+            clearInterval(timeInterval);
+
+            //check answers 
+            checkTrivia();
+
+            $("#trivia").addClass("hidden");
+            $newDiv = $("<div id= 'restart'>");
+            $("#final").append("<h1 id='scoreTitle'> Score: " + score + "/" + total + "</h1>", $newDiv);
+            $("#restart").html("<button id='reset'>RESTART</button>")
+
+
+
+
+        }
+        $("#timer").text(time);
+    }, 1000);
+});
+
+$(document).on("click", "#reset", function () {
+    console.log("wrok")
+    $("#restart").addClass("hidden");
+    $("#scoreTitle").addClass("hidden");
+    $("#intro").removeClass("hidden");
+    // $("#trivia").removeClass("hidden")
+    // $("form").reset();
+    end();
+
+})
+
+function renderQuestions() {
+
+    questions.forEach(function (question, index) {
+        var $form = $("<form>");
+        var $question = $("<h3>").text(question.question);
+
+        $form.append($question);
+
+        question.answers.forEach(function (answer, i) {
+            var $input = $('<input type="radio">');
+            $input.attr("value", answer);
+            $input.attr("name", index);
+            $form.append($input);
+            $form.append(answer);
+        });
+
+        $("#questions").append($form);
+    });
 }
-begin()
+
+function checkTrivia() {
+    var $forms = $("form");
+    $forms.each(function (i, elem) {
+        $(elem).find("input:checked").each(function (i, elem) {
+            answer = (elem.getAttribute("value"));
+            // console.log(answer)
+            // console.log(questions[0].answerIndex)
+            for (var i = 0; i < questions.length; i++) {
+
+                if (answer === questions[i].answerIndex) {
+                    console.log("winning")
+                    score++;
+                    console.log(score)
+                }
+            }
+        });
+    })
+}
+
+function end() {
+    
+
+    time = 45;
+    clearInterval(timeInterval)
+
+}
+
